@@ -24,15 +24,27 @@ const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
 let namespaces = [];
 let types = ['deployment','statefulset'];
 
-app.use((req,res,next) => {                                                                                                                                                                        
-  if(!req.headers.authorization) {                                                                                                                                                                 
-    return res.status(401).json({result:"error",message:"missing authorization header"});                                                                                                          
-  }                                                                                                                                                                                                
-  let authorization_bearer = "Bearer " + process.env.AUTHORIZATION;                                                                                                                                
-  if(req.headers.authorization!==authorization_bearer) {                                                                                                                                           
-    return res.status(401).json({result:"error",message:"invalid authorization bearer token"});                                                                                                    
-  }                                                                                                                                                                                                
-  next();                                                                                                                                                                                          
+const {xHubSignatureMiddleware, extractRawBody} = require('x-hub-signature-middleware');
+app.use(bodyParser.json({
+  verify: extractRawBody
+}));
+
+app.use((req,res,next) => {
+  if(req.headers['x-hub-signature-256']) {
+    return xHubSignatureMiddleware({
+      algorithm: 'sha1',
+      secret: process.env.AUTHORIZATION,
+      require: true
+    })(req,res,next);
+  }
+  if(!req.headers.authorization) { 
+    return res.status(401).json({result:"error",message:"missing authorization header"});      
+  }            
+  let authorization_bearer = "Bearer " + process.env.AUTHORIZATION;        
+  if(req.headers.authorization!==authorization_bearer) {                   
+    return res.status(401).json({result:"error",message:"invalid authorization bearer token"});
+  }            
+  next();      
 });
 
 app.get('/uptime', (req,res) => {
