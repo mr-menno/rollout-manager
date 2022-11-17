@@ -119,5 +119,3 @@ k8sApi.listNamespace().then((res) => {
 }).catch(error => {
   console.error(error.response.body);
 });
-
-//test modification 
