@@ -5,3 +5,4 @@ RUN yarn install
 ARG CI_COMMIT_SHORT_SHA
 ENV COMMIT=${CI_COMMIT_SHORT_SHA}
 CMD ["yarn","start"]
+#test
