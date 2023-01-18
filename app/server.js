@@ -26,7 +26,11 @@ let types = ['deployment','statefulset'];
 
 const {xHubSignatureMiddleware, extractRawBody} = require('x-hub-signature-middleware');
 app.use(bodyParser.json({
-  verify: extractRawBody
+  //verify: extractRawBody
+  verify: (req,res,buf,encoding) => {
+    console.log('saving raw body', buf);
+    req.rawBody = buf;
+  }
 }));
 
 app.use((req,res,next) => {
@@ -34,7 +38,8 @@ app.use((req,res,next) => {
     return xHubSignatureMiddleware({
       algorithm: 'sha1',
       secret: process.env.AUTHORIZATION,
-      require: true
+      require: true,
+      getRawBody: req => req.rawBody,
     })(req,res,next);
   }
   if(!req.headers.authorization) { 
