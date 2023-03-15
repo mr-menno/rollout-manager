@@ -33,6 +33,7 @@ jobs:
         tags: |
             type=ref,event=branch
             type=ref,event=pr
+            type=ref,type=raw,ts,type=schedule
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
