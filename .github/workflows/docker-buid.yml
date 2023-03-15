@@ -33,7 +33,7 @@ jobs:
         tags: |
             type=ref,event=branch
             type=ref,event=pr
-        type=ref,event=branch,suffix=-build-{{date ('YY.MM.Dd-HH:mm' tz='America/Los_Angeles') }}
+            type=ref,event=branch,suffix=-build-{{date ('YY.MM.Dd-HH:mm' tz='America/Los_Angeles') }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
